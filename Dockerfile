@@ -1,4 +1,4 @@
-# Base image with Python 3.9 and Linux
+# Base image with Python 3.10 and Linux
 FROM nvidia/cuda:11.8.0-base-ubuntu20.04
 
 # Set environment variables
@@ -29,8 +29,12 @@ RUN curl -fsSL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_6
     rm /tmp/miniconda.sh && \
     conda clean -afy
 
-# Create and activate robomimic conda environment with Python 3.9
-RUN /opt/conda/bin/conda create -n robomimic_venv python=3.9 -y
+# Accept Anaconda Terms of Service for default channels (required by recent conda versions)
+RUN /opt/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
+    /opt/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
+# Create and activate robomimic conda environment with Python 3.10
+RUN /opt/conda/bin/conda create -n robomimic_venv python=3.10 -y
 
 # Install PyTorch and torchvision with CPU fallback
 RUN /opt/conda/bin/conda run -n robomimic_venv conda install -y pytorch==2.0.0 torchvision==0.15.0 cpuonly -c pytorch || \
